@@ -12,8 +12,8 @@ class Login extends Component {
 
   disableBtn = () => {
     const { name } = this.state;
-    const maxAtt = 3;
-    const val = name.length >= maxAtt;
+    const minAtt = 3;
+    const val = name.length >= minAtt;
 
     this.setState({
       disableBtn: !val,
