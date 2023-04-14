@@ -19,6 +19,7 @@ class Album extends Component {
     if (!JSON.parse(localStorage.getItem(FAVORITE_SONGS_KEY))) {
       localStorage.setItem(FAVORITE_SONGS_KEY, JSON.stringify([]));
     }
+    this.addFavoriteSong();
   }
 
   getMusic = async () => {
@@ -37,14 +38,10 @@ class Album extends Component {
       loading: true,
     });
     await addSong(param);
+    const favoriteSong = await getFavoriteSongs();
+
     this.setState({
       loading: false,
-    }, this.getFavoriteSongs);
-  };
-
-  getFavoriteSongs = async () => {
-    const favoriteSong = await getFavoriteSongs();
-    this.setState({
       favoriteSongs: [...favoriteSong],
     });
   };
