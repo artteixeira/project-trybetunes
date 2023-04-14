@@ -3,15 +3,22 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import Loading from '../components/Loading';
+import MusicCard from '../components/MusicCard';
+import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends Component {
   state = {
     album: [],
     loading: true,
+    favoriteSongs: [],
   };
 
   componentDidMount() {
     this.getMusic();
+    const FAVORITE_SONGS_KEY = 'favorite_songs';
+    if (!JSON.parse(localStorage.getItem(FAVORITE_SONGS_KEY))) {
+      localStorage.setItem(FAVORITE_SONGS_KEY, JSON.stringify([]));
+    }
   }
 
   getMusic = async () => {
@@ -25,8 +32,25 @@ class Album extends Component {
     });
   };
 
+  addFavoriteSong = async (param) => {
+    this.setState({
+      loading: true,
+    });
+    await addSong(param);
+    this.setState({
+      loading: false,
+    }, this.getFavoriteSongs);
+  };
+
+  getFavoriteSongs = async () => {
+    const favoriteSong = await getFavoriteSongs();
+    this.setState({
+      favoriteSongs: [...favoriteSong],
+    });
+  };
+
   render() {
-    const { album, loading } = this.state;
+    const { album, loading, favoriteSongs } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
@@ -43,25 +67,24 @@ class Album extends Component {
                   </section>
                 );
               }) }
-              { album.filter((element, index) => index !== 0).map((element, index) => {
-                const { trackName, previewUrl } = element;
-                return (
-                  <section key={ index }>
-                    <div>
-                      <span>{trackName}</span>
-                      <audio data-testid="audio-component" src={ previewUrl } controls>
-                        <track kind="captions" />
-                        O seu navegador não suporta o elemento
-                        {' '}
-                        {' '}
-                        <code>audio</code>
-                        .
-                      </audio>
-                    </div>
-                  </section>
-                );
-              })}
-
+              <section>
+                { album.filter((_element, index) => index !== 0).map((element, index) => {
+                  const { trackName, previewUrl, trackId } = element;
+                  return (
+                    <MusicCard
+                      trackName={ trackName }
+                      previewUrl={ previewUrl }
+                      key={ index }
+                      trackId={ trackId }
+                      onChange={ async () => {
+                        await this.addFavoriteSong(element);
+                      } }
+                      checked={ favoriteSongs
+                        .some((song) => song.trackId === trackId) }
+                    />
+                  );
+                })}
+              </section>
             </main>) }
       </div>
     );
