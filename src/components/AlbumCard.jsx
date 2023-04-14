@@ -21,7 +21,7 @@ AlbumCard.propTypes = {
   artistName: PropTypes.string.isRequired,
   albumName: PropTypes.string.isRequired,
   albumThumb: PropTypes.string.isRequired,
-  linkAlbum: PropTypes.string.isRequired,
+  linkAlbum: PropTypes.number.isRequired,
 };
 
 export default AlbumCard;

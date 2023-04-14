@@ -9,6 +9,10 @@ class Header extends Component {
     result: '',
   };
 
+  componentDidMount() {
+    this.recoveryUser();
+  }
+
   recoveryUser = async () => {
     const result = await getUser();
     this.setState({
@@ -18,7 +22,6 @@ class Header extends Component {
   };
 
   render() {
-    this.recoveryUser();
     const { loading, result } = this.state;
     return (
       <header data-testid="header-component">
